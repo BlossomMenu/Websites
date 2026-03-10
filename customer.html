@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>blossom — activate</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111114;
+    --surface2: #16161a;
+    --border: #1e1e24;
+    --border2: #2a2a32;
+    --accent: #ff3dff;
+    --accent2: #9b3dff;
+    --text: #e8e8f0;
+    --muted: #555566;
+    --danger: #ff3d5a;
+    --success: #3dffb0;
+    --warn: #ffb03d;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  .bg-orbs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orbFloat 12s ease-in-out infinite;
+  }
+
+  .orb1 {
+    width: 500px; height: 500px;
+    background: rgba(255,61,255,0.06);
+    top: -100px; right: -100px;
+    animation-delay: 0s;
+  }
+
+  .orb2 {
+    width: 400px; height: 400px;
+    background: rgba(155,61,255,0.05);
+    bottom: -80px; left: -80px;
+    animation-delay: -4s;
+  }
+
+  .orb3 {
+    width: 300px; height: 300px;
+    background: rgba(255,61,255,0.04);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: -8s;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%       { transform: translate(30px, -20px) scale(1.05); }
+    66%       { transform: translate(-20px, 30px) scale(0.95); }
+  }
+
+  .grain {
+    position: fixed; inset: 0; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1;
+  }
+
+  /* Grid lines */
+  .grid-lines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    opacity: 0.03;
+    background-image:
+      linear-gradient(var(--accent) 1px, transparent 1px),
+      linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Main container */
+  .container {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 480px;
+    margin: 0 auto;
+    padding: 24px;
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Logo area */
+  .logo-wrap {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+  }
+
+  .logo-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+
+  .logo-icon::before, .logo-icon::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    animation: spin 4s linear infinite;
+  }
+
+  .logo-icon::before {
+    inset: 0;
+    border: 1px solid transparent;
+    border-top-color: var(--accent);
+    border-right-color: rgba(255,61,255,0.3);
+  }
+
+  .logo-icon::after {
+    inset: 8px;
+    border: 1px solid transparent;
+    border-bottom-color: var(--accent2);
+    border-left-color: rgba(155,61,255,0.3);
+    animation-direction: reverse;
+    animation-duration: 3s;
+  }
+
+  .logo-dot {
+    position: absolute;
+    inset: 18px;
+    background: radial-gradient(circle, var(--accent), var(--accent2));
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255,61,255,0.5);
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .logo-text {
+    font-weight: 900;
+    font-size: 2.2rem;
+    letter-spacing: -0.05em;
+    background: linear-gradient(135deg, #fff 0%, #ff3dff 50%, #9b3dff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+    display: block;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+  }
+
+  .card-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
+    50%       { opacity: 0.5; box-shadow: 0 0 4px var(--accent); }
+  }
+
+  .card-body { padding: 28px; }
+
+  /* Steps */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .step:nth-child(1) { animation-delay: 0.3s; }
+  .step:nth-child(2) { animation-delay: 0.4s; }
+  .step:nth-child(3) { animation-delay: 0.5s; }
+
+  .step-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(255,61,255,0.15);
+    border: 1px solid rgba(255,61,255,0.3);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-name {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text);
+    font-family: var(--mono);
+  }
+
+  .step-hint {
+    font-size: 0.67rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-left: 30px;
+    line-height: 1.5;
+  }
+
+  /* Input field */
+  .input-wrap {
+    position: relative;
+    margin-left: 0;
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 13px 16px 13px 44px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .field-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,61,255,0.08);
+  }
+
+  .field-input::placeholder { color: var(--muted); }
+
+  .field-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+
+  .input-wrap:focus-within .field-icon { color: var(--accent); }
+
+  .field-input.valid { border-color: rgba(61,255,176,0.5); }
+  .field-input.invalid { border-color: rgba(255,61,90,0.5); }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+  }
+
+  /* Activate button */
+  .btn-activate {
+    width: 100%;
+    margin-top: 8px;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
+  }
+
+  .btn-activate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-activate:hover::before { opacity: 1; }
+  .btn-activate:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,61,255,0.25); }
+  .btn-activate:active { transform: translateY(0); }
+
+  .btn-activate:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-activate .btn-text { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  /* Spinner */
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .loading .spinner { display: block; }
+  .loading .btn-label { display: none; }
+
+  /* Status panel */
+  .status-panel {
+    margin-top: 16px;
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: none;
+    animation: fadeUp 0.3s ease both;
+    border: 1px solid;
+  }
+
+  .status-panel.show { display: flex; gap: 14px; align-items: flex-start; }
+
+  .status-panel.success {
+    background: rgba(61,255,176,0.06);
+    border-color: rgba(61,255,176,0.25);
+  }
+
+  .status-panel.error {
+    background: rgba(255,61,90,0.06);
+    border-color: rgba(255,61,90,0.25);
+  }
+
+  .status-panel.warn {
+    background: rgba(255,176,61,0.06);
+    border-color: rgba(255,176,61,0.25);
+  }
+
+  .status-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .status-content { flex: 1; }
+
+  .status-title {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .status-panel.success .status-title { color: var(--success); }
+  .status-panel.error   .status-title { color: var(--danger); }
+  .status-panel.warn    .status-title { color: var(--warn); }
+
+  .status-msg {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Info card - shows after success */
+  .info-card {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: none;
+  }
+
+  .info-card.show { display: block; animation: fadeUp 0.4s ease 0.1s both; }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-row:first-child { padding-top: 0; }
+
+  .info-key {
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .info-val {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text);
+    text-align: right;
+  }
+
+  .info-val.gold    { color: #ffd700; }
+  .info-val.pink    { color: var(--accent); }
+  .info-val.purple  { color: var(--accent2); }
+  .info-val.orange  { color: var(--warn); }
+  .info-val.green   { color: var(--success); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+    animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
+    line-height: 1.8;
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .footer a:hover { text-decoration: underline; }
+
+  /* Scanline effect on success */
+  .scanline {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    background: linear-gradient(transparent 50%, rgba(255,61,255,0.015) 50%);
+    background-size: 100% 4px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .scanline.show { opacity: 1; }
+
+  /* HWID display box */
+  .hwid-display {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    margin-left: 0;
+  }
+
+  .hwid-display:hover { border-color: var(--accent); }
+
+  .hwid-display span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .copy-hint {
+    font-size: 0.58rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .hwid-display:hover .copy-hint { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+<div class="grain"></div>
+<div class="grid-lines"></div>
+<div class="scanline" id="scanline"></div>
+
+<div class="container">
+
+  <!-- Logo -->
+  <div class="logo-wrap">
+    <div class="logo-icon">
+      <div class="logo-dot"></div>
+    </div>
+    <span class="logo-text">blossom</span>
+    <span class="logo-sub">menu activation portal</span>
+  </div>
+
+  <!-- Card -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">key verification</div>
+    </div>
+
+    <div class="card-body">
+      <div class="steps">
+
+        <!-- Step 1: Macho HWID -->
+        <div class="step">
+          <div class="step-label">
+            <div class="step-num">1</div>
+            <div class="step-name">Your Macho HWID</div>
+          </div>
+          <div class="step-hint">Open Macho and copy your Authentication Key shown on the main screen.</div>
+          <div class="input-wrap">
+            <span class="field-icon">⬡</span>
+            <input
+              type="text"
+              class="field-input"
+              id="hwid-input"
+              placeholder="e.g. 666212519343914179"
+              oninput="validateFields()"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <div class="hwid-display" id="hwid-preview" style="display:none" onclick="copyHwid()">
+            <span id="hwid-preview-text"></span>
+            <span class="copy-hint">click to copy</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Step 2: Blossom License Key -->
+        <div class="step">
+          <div class="step-label">
+            <div class="step-num">2</div>
+            <div class="step-name">Your Blossom License Key</div>
+          </div>
+          <div class="step-hint">Enter the license key you received after purchase. Check your Discord DMs or email.</div>
+          <div class="input-wrap">
+            <span class="field-icon">◈</span>
+            <input
+              type="text"
+              class="field-input"
+              id="license-input"
+              placeholder="BLOSSOM-XXXX-XXXX-XXXX"
+              oninput="validateFields()"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Step 3: Activate -->
+        <div class="step">
+          <div class="step-label">
+            <div class="step-num">3</div>
+            <div class="step-name">Activate Access</div>
+          </div>
+          <div class="step-hint">Both fields required. Your HWID will be linked to your license key.</div>
+        </div>
+
+      </div>
+
+      <!-- Button -->
+      <button class="btn-activate" id="activate-btn" onclick="activate()" disabled>
+        <div class="btn-text">
+          <div class="spinner"></div>
+          <span class="btn-label">Verify &amp; Activate</span>
+        </div>
+      </button>
+
+      <!-- Status -->
+      <div class="status-panel" id="status-panel">
+        <div class="status-icon" id="status-icon"></div>
+        <div class="status-content">
+          <div class="status-title" id="status-title"></div>
+          <div class="status-msg" id="status-msg"></div>
+        </div>
+      </div>
+
+      <!-- Success info card -->
+      <div class="info-card" id="info-card">
+        <div class="info-row">
+          <span class="info-key">Status</span>
+          <span class="info-val green" id="info-status">Active</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Plan</span>
+          <span class="info-val" id="info-plan">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Expires</span>
+          <span class="info-val" id="info-expires">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">HWID Linked</span>
+          <span class="info-val green" id="info-hwid">—</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    need a key? join our discord &nbsp;·&nbsp; <a href="#">discord.gg/blossom</a><br>
+    your hwid is unique to your machine and cannot be transferred
+  </div>
+
+</div>
+
+<script>
+  // ─── Helpers ──────────────────────────────────────────────────────────────────
+  function validateFields() {
+    const hwid    = document.getElementById('hwid-input').value.trim();
+    const license = document.getElementById('license-input').value.trim();
+    const btn     = document.getElementById('activate-btn');
+
+    // Show HWID preview
+    const preview = document.getElementById('hwid-preview');
+    const previewText = document.getElementById('hwid-preview-text');
+    if (hwid.length > 4) {
+      previewText.textContent = hwid;
+      preview.style.display = 'flex';
+    } else {
+      preview.style.display = 'none';
+    }
+
+    btn.disabled = !(hwid.length > 3 && license.length > 3);
+  }
+
+  function copyHwid() {
+    const hwid = document.getElementById('hwid-input').value.trim();
+    if (!hwid) return;
+    navigator.clipboard.writeText(hwid);
+    const hint = document.querySelector('.copy-hint');
+    hint.textContent = 'copied!';
+    setTimeout(() => hint.textContent = 'click to copy', 1500);
+  }
+
+  // ─── Status display ───────────────────────────────────────────────────────────
+  function showStatus(type, title, msg) {
+    const panel = document.getElementById('status-panel');
+    const icon  = document.getElementById('status-icon');
+    const t     = document.getElementById('status-title');
+    const m     = document.getElementById('status-msg');
+
+    panel.className = 'status-panel show ' + type;
+    icon.textContent  = type === 'success' ? '✓' : type === 'error' ? '✕' : '⚠';
+    t.textContent = title;
+    m.textContent = msg;
+  }
+
+  function showInfoCard(data) {
+    const card = document.getElementById('info-card');
+    card.classList.add('show');
+
+    const planColors = { lifetime: 'gold', month: 'pink', week: 'purple', day: 'orange' };
+    const planLabels = { lifetime: 'Lifetime', month: '1 Month', week: '1 Week', day: '1 Day' };
+
+    document.getElementById('info-plan').textContent    = planLabels[data.duration] || data.duration;
+    document.getElementById('info-plan').className      = 'info-val ' + (planColors[data.duration] || '');
+    document.getElementById('info-expires').textContent = data.expiresAt ? new Date(data.expiresAt).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'Never';
+    document.getElementById('info-expires').className   = 'info-val ' + (data.duration === 'lifetime' ? 'gold' : 'green');
+    document.getElementById('info-hwid').textContent    = data.hwid.slice(0, 6) + '••••' + data.hwid.slice(-4);
+  }
+
+  // ─── Activate ─────────────────────────────────────────────────────────────────
+  function activate() {
+    const hwid    = document.getElementById('hwid-input').value.trim();
+    const license = document.getElementById('license-input').value.trim();
+    const btn     = document.getElementById('activate-btn');
+
+    if (!hwid || !license) return;
+
+    // Loading state
+    btn.disabled = true;
+    btn.classList.add('loading');
+    document.getElementById('status-panel').className = 'status-panel';
+    document.getElementById('info-card').classList.remove('show');
+
+    // Read keys from localStorage (populated by admin panel)
+    setTimeout(() => {
+      btn.classList.remove('loading');
+
+      const stored = JSON.parse(localStorage.getItem('blossom_keys_v2') || '[]');
+      const now    = Date.now();
+
+      // Find key by HWID
+      const byHwid = stored.find(k => k.hwid === hwid);
+
+      // Find key by license (note field or hwid field used as license)
+      // License key = stored as hwid OR as note (whichever matches)
+      const byLicense = stored.find(k =>
+        k.hwid === license ||
+        (k.note && k.note.toLowerCase() === license.toLowerCase())
+      );
+
+      // Match: HWID must be whitelisted AND license must match something
+      // Logic: user enters their HWID + the license key they were sold
+      // The license key IS their HWID (that's how you sell it to them)
+      // So both fields should match the same record
+      const record = stored.find(k => k.hwid === hwid);
+
+      if (!record) {
+        showStatus('error', 'HWID Not Found',
+          'Your Macho HWID is not in the whitelist. Contact support or purchase access to get whitelisted.');
+        btn.disabled = false;
+        return;
+      }
+
+      // Validate license key matches - license key IS their HWID or a custom note
+      const licenseMatch =
+        license === hwid ||
+        (record.note && record.note.toLowerCase() === license.toLowerCase());
+
+      if (!licenseMatch) {
+        showStatus('warn', 'License Key Mismatch',
+          'Your HWID was found but the license key does not match. Double-check your key or contact support.');
+        btn.disabled = false;
+        return;
+      }
+
+      // Check expiry
+      if (record.expiresAt && now > record.expiresAt) {
+        showStatus('error', 'License Expired',
+          'Your license has expired. Purchase a renewal to regain access. Contact us on Discord.');
+        btn.disabled = false;
+        return;
+      }
+
+      // Success!
+      showStatus('success', 'Access Granted',
+        'Your HWID is verified and active. You can now load the blossom menu in Macho.');
+      showInfoCard(record);
+      document.getElementById('scanline').classList.add('show');
+      setTimeout(() => document.getElementById('scanline').classList.remove('show'), 1500);
+
+    }, 1200); // simulate network check
+  }
+
+  // Enter key support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const btn = document.getElementById('activate-btn');
+      if (!btn.disabled) activate();
+    }
+  });
+</script>
+</body>
+</html>
